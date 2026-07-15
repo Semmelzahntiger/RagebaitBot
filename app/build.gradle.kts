@@ -1,0 +1,22 @@
+plugins {
+    id("java")
+}
+
+group = "com.tree3"
+version = "1.0-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    implementation("net.dv8tion:JDA:6.3.0")
+    annotationProcessor(project(":processor"))
+    compileOnly(project(":processor"))
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
