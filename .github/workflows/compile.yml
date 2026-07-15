@@ -13,7 +13,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           java-version: '25'
-          distribution: 'termurin'
+          distribution: 'temurin'
       - name: Compile
         run: |
           ./gradlew app:clean
