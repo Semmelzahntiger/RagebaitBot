@@ -47,6 +47,9 @@ public class TreeologieData {
     public boolean userInTreeologie(String userId) {
         return userStages.containsKey(userId);
     }
+    public boolean inFinalStage(String userId) {
+        return userStages.containsKey(userId) && userStages.get(userId).equals(Stage.THREE);
+    }
     public boolean isCorrectAnswer(String userId, String answer) {
         Optional<Stage> stage = getUserStage(userId);
         if(stage.isPresent()) {
@@ -72,5 +75,8 @@ public class TreeologieData {
             case TWO -> Stage.THREE;
             case THREE -> null;
         };
+    }
+    public void removeUser(String userId) {
+        userStages.remove(userId);
     }
 }

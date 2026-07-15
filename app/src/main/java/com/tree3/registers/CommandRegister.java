@@ -1,4 +1,5 @@
 package com.tree3.registers;
+import com.sun.source.tree.Tree;
 import com.tree3.data.TreeologieData;
 import com.tree3.util.LogUtil;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -41,7 +42,6 @@ public class CommandRegister {
 
     private static  Consumer<SlashCommandInteractionEvent> getTreeologieBehaviour(){
         return event -> {
-            event.getChannel().sendMessage("Was ist TREE(1)?").queue();
             boolean newUser = TreeologieData.getInstance().addUser(event.getUser().getId());
             if(newUser){
                 event.reply(TreeologieData.getInstance().getQuestion(event.getUser().getId())).queue();
@@ -56,6 +56,10 @@ public class CommandRegister {
             String n = event.getOption("answer").getAsString();
             boolean inTreeologie = TreeologieData.getInstance().userInTreeologie(event.getUser().getId());
             if(inTreeologie){
+                if(TreeologieData.getInstance().inFinalStage(event.getUser().getId())) {
+                    event.reply("Noooooooo").queue();
+                    TreeologieData.getInstance().removeUser(event.getUser().getId());
+                }
                 boolean correctAnswer = TreeologieData.getInstance().isCorrectAnswer(event.getUser().getId(), n);
                 if(correctAnswer){
                     Optional<TreeologieData.Stage> stage = TreeologieData.getInstance().getUserStage(event.getUser().getId());
@@ -65,6 +69,10 @@ public class CommandRegister {
                     else {
                         event.reply("You finished the Treeology").queue();
                     }
+                }
+                else {
+                    event.reply("Noooooooo").queue();
+                    TreeologieData.getInstance().removeUser(event.getUser().getId());
                 }
             }
         };
