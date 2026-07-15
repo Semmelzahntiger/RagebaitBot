@@ -13,8 +13,14 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     implementation("net.dv8tion:JDA:6.3.0")
+    // Source: https://mvnrepository.com/artifact/io.github.cdimascio/dotenv-java
+    implementation("io.github.cdimascio:dotenv-java:3.2.0")
     annotationProcessor(project(":processor"))
     compileOnly(project(":processor"))
+    // Source: https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    implementation("org.slf4j:slf4j-api:2.0.18")
+    // Source: https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+    implementation("ch.qos.logback:logback-classic:1.5.32")
 }
 
 tasks.test {
