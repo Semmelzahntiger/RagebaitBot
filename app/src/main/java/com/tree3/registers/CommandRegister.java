@@ -19,6 +19,7 @@ public class CommandRegister {
         Registry.addCommand("tree", "prints tree", slash -> {
             slash.addOption(OptionType.INTEGER, "n", "n-th tree",true);
         }, getTreeBehaviour());
+        Registry.addCommand("dietreeologie", "dietreeologie", slash -> {}, getTreeologieBehaviour());
     }
 
     private static Consumer<SlashCommandInteractionEvent> getTreeBehaviour() {
@@ -31,6 +32,13 @@ public class CommandRegister {
                 event.getChannel().sendMessage("I love TREE(" + i + ")").queue();
 
             }
+        };
+    }
+
+    private static  Consumer<SlashCommandInteractionEvent> getTreeologieBehaviour(){
+        return event -> {
+            event.getChannel().sendMessage("Was ist TREE(1)?").queue();
+
         };
     }
 }
