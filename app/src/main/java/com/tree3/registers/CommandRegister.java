@@ -25,6 +25,9 @@ public class CommandRegister {
         Registry.addCommand("answertreeologie", "Antwort auf die Treeologie", slash -> {
             slash.addOption(OptionType.INTEGER, "answer", "Antwort");
         }, getAnswerTreeologieBehaviour());
+        Registry.addCommand("nuke", "integralragebait", slash -> {
+            slash.addOption(OptionType.STRING, "User", "Wen trifft die Nuke?", true);
+        }, getNukeBehaviour());
     }
 
     private static Consumer<SlashCommandInteractionEvent> getTreeBehaviour() {
@@ -75,6 +78,12 @@ public class CommandRegister {
                     TreeologieData.getInstance().removeUser(event.getUser().getId());
                 }
             }
+        };
+    }
+
+    private static Consumer<SlashCommandInteractionEvent> getNukeBehaviour(){
+        return event ->{
+            System.out.println("TREE");
         };
     }
 }
