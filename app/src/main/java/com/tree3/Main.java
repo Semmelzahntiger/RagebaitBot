@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 
 public class Main {
     public static void main(String[] args) {
@@ -33,9 +34,11 @@ public class Main {
         CommandData[] commands = Registry.getCommands().toArray(new CommandData[0]);
         LogUtil.getLogger().info("Found {} commands" , commands.length);
         JDA jda = JDABuilder.createDefault(token,
+                        GatewayIntent.GUILD_MEMBERS,
                         GatewayIntent.GUILD_MESSAGES,
                         GatewayIntent.MESSAGE_CONTENT)
                 .addEventListeners(listeners)
+                .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .setActivity(Activity.customStatus("Ragebaiting"))
                 .build();
         jda.updateCommands().addCommands(commands).queue();

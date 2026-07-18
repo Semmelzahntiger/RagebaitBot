@@ -54,7 +54,7 @@ public class CommandRegister {
         };
     }
 
-    private static  Consumer<SlashCommandInteractionEvent> getTreeologieBehaviour(){
+    private static Consumer<SlashCommandInteractionEvent> getTreeologieBehaviour(){
         return event -> {
             boolean newUser = TreeologieData.getInstance().addUser(event.getUser().getId());
             if(newUser){
@@ -103,13 +103,19 @@ public class CommandRegister {
             int a = Helperclass.getRandomNumber(1, 10);
             int b = Helperclass.getRandomNumber(1, 10);
             User user = event.getOption("user").getAsUser();
+            String id = user.getId();
             Guild guild = event.getGuild();
-            Member member =guild.getMember(user);
+            Member member = guild.getMemberById(id);
+            if(member == null) {
+                event.reply("Error while fetching member").queue();
+                return;
+            }
             String reply = String.format("Was ist %d + %d?", a, b);
             List<Role> roles = member.getRoles();
             event.reply("Sendepause für " + user.getName()).queue();
-            guild.modifyMemberRoles(member).queue();
+            guild.modifyMemberRoles(member, List.of()).queue();
             guild.mute(user, true).queue();
+
             servermap.put(user, guild);
             answermap.put(user, a+b);
             rolemap.put(user, roles);
@@ -124,7 +130,7 @@ public class CommandRegister {
             int answer = event.getOption("answer").getAsInt();
             User user = event.getUser();
             Guild guild = servermap.get(user);
-            Member member =guild.getMember(user);
+            Member member = guild.getMember(user);
             if(answer == answermap.get(user)){
                 guild.mute(user, false).queue();
                 event.reply("Yess").queue();
