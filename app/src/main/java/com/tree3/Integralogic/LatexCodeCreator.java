@@ -37,14 +37,15 @@ public class LatexCodeCreator {
     }
 
     private void abcd(){
+
         this.a = new int[data.length];
         this.b = new int[data.length];
         this.c = new int[data.length];
 
         for (int i = 0; i < a.length; i++) {
-            a[i] = data[0][i];
-            b[i] = data[1][i];
-            c[i] = data[2][i];
+            a[i] = data[i][0];
+            b[i] = data[i][1];
+            c[i] = data[i][2];
         }
 
     }

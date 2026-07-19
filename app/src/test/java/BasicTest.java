@@ -41,4 +41,12 @@ public class BasicTest {
         String a = new LatexCodeCreator(new IntegralGenerate().getIntegralProblem()).toLatexIntegral();
         System.out.println(a);
     }
+    @Test
+    void randomToImg() {
+        String formula = new LatexCodeCreator(new IntegralGenerate().getIntegralProblem()).toLatexIntegral();
+        Optional<InputStream> result = LaTeXParser.formulaToInputStream(formula);
+        Assertions.assertTrue(result.isPresent());
+        boolean written = inputStreamToPngFile(result.get(), UUID.randomUUID() + ".png");
+        Assertions.assertTrue(written);
+    }
 }

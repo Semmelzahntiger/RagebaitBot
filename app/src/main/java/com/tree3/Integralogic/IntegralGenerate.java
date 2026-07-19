@@ -31,10 +31,10 @@ public class IntegralGenerate {
     }
 
     public int[][] dataGenerator(){
-        int[][] data = new int[3][amount];
+        int[][] data = new int[amount][3];
         for (int i = 0; i < amount; i++) {
             for (int j = 0; j < 3; j++) {
-                data[j][i] = (1 - 2*Helperclass.getRandomNumber(0, 1)) * Helperclass.getRandomNumber(1, 5);
+                data[i][j] = (1 - 2*Helperclass.getRandomNumber(0, 1)) * Helperclass.getRandomNumber(1, 5);
             }
         }
         return data;
