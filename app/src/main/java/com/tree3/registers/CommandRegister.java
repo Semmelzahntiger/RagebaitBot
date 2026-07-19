@@ -2,6 +2,7 @@ package com.tree3.registers;
 import com.sun.source.tree.Tree;
 import com.tree3.Integralogic.Helperclass;
 import com.tree3.data.TreeologieData;
+import com.tree3.util.LaTeXParser;
 import com.tree3.util.LogUtil;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -13,7 +14,9 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.utils.FileUpload;
 
+import java.io.InputStream;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -45,6 +48,9 @@ public class CommandRegister {
             slash.addOption(OptionType.INTEGER, "n", "creates a Channel with the name TREE(n)", true);
             slash.addOption(OptionType.STRING, "category", "Which category will it be in?", true);
         }, getCreateChannelBehaviour());
+        Registry.addCommand("generatelatex", "Creates a Latex Formula based on the given String",
+                slashCommandData -> slashCommandData.addOption(OptionType.STRING, "formula", "the formula to be parsed into the LaTeX Image", true),
+                getGenerateLaTeXImageBehaviour());
     }
 
     private static Consumer<SlashCommandInteractionEvent> getTreeBehaviour() {
@@ -170,6 +176,21 @@ public class CommandRegister {
                             return 0;
                         }
                 ).queue());
+            }
+        };
+    }
+    private static Consumer<SlashCommandInteractionEvent> getGenerateLaTeXImageBehaviour() {
+        return event -> {
+            String formula = event.getOption("formula").getAsString();
+            event.reply("Generating LaTeX Image...").queue();
+            Optional<InputStream> imageStream = LaTeXParser.formulaToInputStream(formula);
+            if(imageStream.isPresent()) {
+                InputStream image = imageStream.get();
+                event.getHook().sendMessage("Completed Generation of Formula.")
+                        .addFiles(FileUpload.fromData(image, UUID.randomUUID() + ".png")).queue();
+            }
+            else {
+                event.getHook().sendMessage("Couldn't generate LaTeX Image").queue();
             }
         };
     }

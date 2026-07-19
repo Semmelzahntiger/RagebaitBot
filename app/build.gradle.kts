@@ -22,6 +22,14 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.18")
     // Source: https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
     implementation("ch.qos.logback:logback-classic:1.5.32")
+    implementation("org.scilab.forge:jlatexmath:1.0.7")
+}
+tasks.register<JavaExec>("runBot") {
+    dependsOn("assemble")
+    group = "application"
+    description = "Runs the Bot"
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.tree3.Main")
 }
 
 tasks.test {
