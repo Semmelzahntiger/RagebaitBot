@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -40,6 +41,10 @@ public class CommandRegister {
                 slash -> {
             slash.addOption(OptionType.INTEGER, "answer", "answer to the question", true);
         }, getSimpleAnswerBehaviour());
+        Registry.addCommand("createchannel", "Layer 8", slash -> {
+            slash.addOption(OptionType.INTEGER, "n", "creates a Channel with the name TREE(n)", true);
+            slash.addOption(OptionType.STRING, "category", "Which category will it be in?", true);
+        }, getCreateChannelBehaviour());
     }
 
     private static Consumer<SlashCommandInteractionEvent> getTreeBehaviour() {
@@ -138,6 +143,33 @@ public class CommandRegister {
             }
             else {
                 event.reply("Noooooo").queue();
+            }
+        };
+    }
+
+    private static Consumer<SlashCommandInteractionEvent> getCreateChannelBehaviour(){
+        return event -> {
+            Guild guild = event.getGuild();
+            String category = event.getOption("category").getAsString();
+            int n = event.getOption("n").getAsInt();
+            List<Category> categories = guild.getCategoriesByName(category, true);
+            event.reply("Channel wurde erstellt").queue();
+            for (Category category1 : categories) {
+                guild.createVoiceChannel("TREE(" + n + ")", category1).queue(voiceChannel ->
+                        voiceChannel.getGuild().getCategoryById(category1.getId()).modifyVoiceChannelPositions().sortOrder(
+                        (one, two) -> {
+                            int orderOfOne = Integer.parseInt(one.getName().replaceAll("[^0-9]", ""));
+                            int orderOfTwo = Integer.parseInt(two.getName().replaceAll("[^0-9]", ""));
+
+                            if(orderOfOne > orderOfTwo) {
+                                return 1;
+                            }
+                            else if (orderOfOne < orderOfTwo) {
+                                return -1;
+                            }
+                            return 0;
+                        }
+                ).queue());
             }
         };
     }
