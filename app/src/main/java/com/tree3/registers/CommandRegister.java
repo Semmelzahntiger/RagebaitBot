@@ -188,7 +188,7 @@ public class CommandRegister {
             System.out.println("Given : " + givenanswer);
 
             if (Helperclass.equalInMargin(givenanswer, correctanswer, 0.5)){
-                event.reply("Du bist wahrscheinlich Serhad oder Michael").queue();
+                event.reply("Du bist wahrscheinlich Serhad, Ben oder Michael").queue();
                 guild.mute(user, false).queue();
                 event.reply("Yess").queue();
                 guild.modifyMemberRoles(member, rolemap.get(user)).queue();
