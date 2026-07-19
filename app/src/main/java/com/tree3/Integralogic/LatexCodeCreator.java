@@ -59,11 +59,11 @@ public class LatexCodeCreator {
     }
 
     private String sineToLatex(int a, int b, int c){
-        return String.format("%+d \\cdot sin(%d x + %d)", a, b ,c);
+        return String.format("%+d \\cdot \\sin(%d x + %d)", a, b ,c);
     }
 
     private String cosineToLatex(int a, int b, int c){
-        return String.format("%+d \\cdot cos(%d x %+d)", a, b ,c);
+        return String.format("%+d \\cdot \\cos(%d x %+d)", a, b ,c);
     }
 
     private String xexponentialToLatex(int a, int b, int c){
@@ -75,11 +75,11 @@ public class LatexCodeCreator {
     }
 
     private String sincosToLatex(int a, int b, int c){
-        return String.format("%+d \\cdot sin(%d x %+d) \\cdot cos(%d x %+d)", a, b ,c, b, c);
+        return String.format("%+d \\cdot \\sin(%d x %+d) \\cdot \\cos(%d x %+d)", a, b ,c, b, c);
     }
 
     private String sqrtToLatex(int a, int b, int c){
-        return String.format("%+d \\cdot sqrt{%d x %+d}", a, b ,c);
+        return String.format("%+d \\cdot \\sqrt{%d x %+d}", a, b ,c);
     }
 
     private String laurentToLatex(int a, int b, int c){
