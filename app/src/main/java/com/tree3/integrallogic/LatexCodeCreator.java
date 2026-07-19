@@ -1,5 +1,4 @@
-package com.tree3.Integralogic;
-import static com.tree3.Integralogic.IntegralSolve.FunctionType.*;
+package com.tree3.integrallogic;
 
 
 public class LatexCodeCreator {

@@ -1,6 +1,6 @@
-package com.tree3.Integralogic;
+package com.tree3.integrallogic;
 
-import static com.tree3.Integralogic.IntegralGenerate.Difficulty.*;
+import static com.tree3.integrallogic.IntegralGenerate.Difficulty.*;
 
 public class Helperclass {
 

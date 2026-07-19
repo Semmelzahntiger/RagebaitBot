@@ -1,4 +1,4 @@
-package com.tree3.Integralogic;
+package com.tree3.integrallogic;
 
 
 import java.util.ArrayList;
@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.tree3.Integralogic.IntegralGenerate.Difficulty.*;
-import static com.tree3.Integralogic.IntegralSolve.FunctionType.*;
+import static com.tree3.integrallogic.IntegralGenerate.Difficulty.*;
+import static com.tree3.integrallogic.IntegralSolve.FunctionType.*;
 
 
 public class IntegralGenerate {

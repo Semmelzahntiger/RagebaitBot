@@ -1,1 +1,2 @@
-com.tree3.AnnotationProcessor
+com.tree3.ListenerAnnotationProcessor
+com.tree3.CommandAnnotationProcessor

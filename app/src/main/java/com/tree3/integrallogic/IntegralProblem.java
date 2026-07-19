@@ -1,4 +1,4 @@
-package com.tree3.Integralogic;
+package com.tree3.integrallogic;
 
 public class IntegralProblem {
 

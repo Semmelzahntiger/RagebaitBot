@@ -1,6 +1,6 @@
 import com.tree3.util.LaTeXParser;
-import com.tree3.Integralogic.IntegralGenerate;
-import com.tree3.Integralogic.LatexCodeCreator;
+import com.tree3.integrallogic.IntegralGenerate;
+import com.tree3.integrallogic.LatexCodeCreator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

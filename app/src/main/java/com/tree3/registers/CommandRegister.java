@@ -1,9 +1,11 @@
 package com.tree3.registers;
-import com.sun.source.tree.Tree;
-import com.tree3.Integralogic.*;
+import com.tree3.integrallogic.Helperclass;
 import com.tree3.data.TreeologieData;
+import com.tree3.integrallogic.IntegralGenerate;
+import com.tree3.integrallogic.IntegralProblem;
+import com.tree3.integrallogic.LatexCodeCreator;
+import com.tree3.integrallogic.ProblemSolve;
 import com.tree3.util.LaTeXParser;
-import com.tree3.util.LogUtil;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -11,16 +13,13 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
-import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.utils.FileUpload;
 
 import java.io.InputStream;
 import java.util.*;
 import java.util.function.Consumer;
 
-import static com.tree3.Integralogic.IntegralGenerate.Difficulty.*;
+import static com.tree3.integrallogic.IntegralGenerate.Difficulty.*;
 
 public class CommandRegister {
 

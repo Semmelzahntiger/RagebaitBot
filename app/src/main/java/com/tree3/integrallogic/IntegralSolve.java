@@ -1,4 +1,4 @@
-package com.tree3.Integralogic;
+package com.tree3.integrallogic;
 
 import java.util.HashMap;
 import java.util.Map;
