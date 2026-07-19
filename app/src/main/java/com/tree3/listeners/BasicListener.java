@@ -11,7 +11,7 @@ public class BasicListener extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         if(event.getAuthor().isBot()) return;
-        if(event.getMessage().getContentRaw().toLowerCase().contains("tree")) {
+        if(event.getMessage().getContentRaw().toLowerCase().contains("tree") || event.getMessage().getContentRaw().toLowerCase().contains("baum")) {
             event.getChannel().sendMessage("I love TREE(3)").queue();
         }
     }

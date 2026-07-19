@@ -1,6 +1,7 @@
 package com.tree3;
 
 import com.tree3.cli.CLIReader;
+import com.tree3.generated.GeneratedCommands;
 import com.tree3.generated.GeneratedEventListeners;
 import com.tree3.registers.CommandRegister;
 import com.tree3.registers.Registry;
@@ -11,6 +12,9 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
+
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -30,17 +34,23 @@ public class Main {
 
         LogUtil.getLogger().info("Registering Commands...");
         CommandRegister.register();
-        CommandData[] commands = Registry.getCommands().toArray(new CommandData[0]);
-        LogUtil.getLogger().info("Found {} commands" , commands.length);
+        for (GeneratedCommand command : GeneratedCommands.getCommands()) {
+            Registry.addCommand(command);
+        }
+        List<CommandData> commands = Registry.getCommands();
+        LogUtil.getLogger().info("Found {} commands" , commands.size());
         JDA jda = JDABuilder.createDefault(token,
+                        GatewayIntent.GUILD_MEMBERS,
                         GatewayIntent.GUILD_MESSAGES,
                         GatewayIntent.MESSAGE_CONTENT)
                 .addEventListeners(listeners)
+                .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .setActivity(Activity.customStatus("Ragebaiting"))
                 .build();
         jda.updateCommands().addCommands(commands).queue();
         LogUtil.getLogger().info("Bot started");
         CLIReader reader = new CLIReader();
         reader.start();
+
     }
 }

@@ -1,5 +1,6 @@
 package com.tree3.registers;
 
+import com.tree3.GeneratedCommand;
 import com.tree3.util.LogUtil;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -25,6 +26,15 @@ public class Registry {
         slashCommandModifier.accept(command);
         commands.add(command);
         definedCommands.put(commandName, onEvent);
+    }
+    public static void addCommand(GeneratedCommand commandData) {
+        if(definedCommands.containsKey(commandData.name())) {
+            LogUtil.getLogger().error("Command {} is already registered!", commandData.name());
+        }
+        SlashCommandData command = Commands.slash(commandData.name(), commandData.description());
+        commandData.slashCommandDataConsumer().accept(command);
+        commands.add(command);
+        definedCommands.put(commandData.name(), commandData.eventConsumer());
     }
 
     public static List<CommandData> getCommands() {
