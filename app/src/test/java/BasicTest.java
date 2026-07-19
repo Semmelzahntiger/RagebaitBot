@@ -1,4 +1,6 @@
 import com.tree3.util.LaTeXParser;
+import com.tree3.Integralogic.IntegralGenerate;
+import com.tree3.Integralogic.LatexCodeCreator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -32,5 +34,11 @@ public class BasicTest {
         Assertions.assertTrue(result.isPresent());
         boolean written = inputStreamToPngFile(result.get(), UUID.randomUUID() + ".png");
         Assertions.assertTrue(written);
+    }
+
+    @Test
+    void latex(){
+        String a = new LatexCodeCreator(new IntegralGenerate().getIntegralProblem()).toLatexIntegral();
+        System.out.println(a);
     }
 }
