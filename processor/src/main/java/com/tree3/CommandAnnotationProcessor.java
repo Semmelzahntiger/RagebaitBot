@@ -9,7 +9,6 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
@@ -18,16 +17,13 @@ import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 
 @SupportedAnnotationTypes("com.tree3.BotCommand")
 @SupportedSourceVersion(SourceVersion.RELEASE_25)
 public class CommandAnnotationProcessor extends AbstractProcessor {
-    private static final String SLASH_COMMAND_EVENT = "net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent";
     private static final String COMMAND_TYPE = "com.tree3.Command";
     private static final String GENERATED_PACKAGE = "com.tree3.generated";
     private static final String GENERATED_CLASS = "GeneratedCommands";
@@ -36,9 +32,7 @@ public class CommandAnnotationProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        // Emit the holder exactly once, and never from the final round (the Filer
-        // rejects file creation there). This runs even when no @BotCommand class exists,
-        // so GeneratedCommands is always generated for callers to reference.
+        // Warning: Do not rewrite to generate in the final round. The filer's generated file wont be recognized by the compiler which will lead to a ClassNotFoundException
         if (generated || roundEnv.processingOver()) {
             return false;
         }
