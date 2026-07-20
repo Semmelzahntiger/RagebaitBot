@@ -5,6 +5,7 @@ import com.tree3.generated.GeneratedCommands;
 import com.tree3.generated.GeneratedEventListeners;
 import com.tree3.registers.CommandRegister;
 import com.tree3.registers.Registry;
+import com.tree3.util.BotHttpClient;
 import com.tree3.util.LogUtil;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.JDA;
@@ -17,11 +18,17 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import java.util.List;
 
 public class Main {
+
+    private static String latexInterpreterUri = null;
+    private static BotHttpClient httpClient = null;
     public static void main(String[] args) {
         LogUtil.getLogger().info("Starting Bot...");
 
         Dotenv dotenv = Dotenv.load();
         String token = dotenv.get("BOT_TOKEN");
+
+        latexInterpreterUri = dotenv.get("LATEX_INTERPRETER_URI");
+        httpClient = new BotHttpClient();
 
         if (token == null) {
             LogUtil.getLogger().error("Token not found, Bot cannot be started");
@@ -52,5 +59,11 @@ public class Main {
         CLIReader reader = new CLIReader();
         reader.start();
 
+    }
+    public static String getLatexInterpreterUri() {
+        return latexInterpreterUri;
+    }
+    public static BotHttpClient getHttpClient() {
+        return httpClient;
     }
 }
