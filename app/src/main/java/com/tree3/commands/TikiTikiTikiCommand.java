@@ -3,6 +3,7 @@ package com.tree3.commands;
 import com.tree3.BotCommand;
 import com.tree3.Command;
 import com.tree3.audio.BotAudioSystem;
+import com.tree3.util.ThreadUtil;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
@@ -10,6 +11,9 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.managers.AudioManager;
+
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @BotCommand(name = "tikitikitiki", description = "Tiki Tiki Tiki")
 public class TikiTikiTikiCommand implements Command {
@@ -23,15 +27,36 @@ public class TikiTikiTikiCommand implements Command {
 
     @Override
     public void onCommand(SlashCommandInteractionEvent event) {
+        event.reply("TIKI TIKI TIKI").queue();
         Member member = event.getMember();
+        Member target = event.getOption("target").getAsMember();
         Guild guild = event.getGuild();
-        if(member != null && member.getVoiceState() != null && member.getVoiceState().inAudioChannel()) {
-            VoiceChannel channel = member.getVoiceState().getChannel().asVoiceChannel();
-            AudioManager audioManager = guild.getAudioManager();
-            audioManager.openAudioConnection(channel);
-            audioManager.setSendingHandler(BotAudioSystem.getLavaAudioPlayerSendHandler());
+        if(target != null && member.getVoiceState() != null && member.getVoiceState().inAudioChannel()) {
+            VoiceChannel prev = target.getVoiceState().getChannel().asVoiceChannel();
+            Optional<VoiceChannel> tikiChannel = guild.getVoiceChannelsByName(TIKI, true).stream().findFirst();
+            if(tikiChannel.isPresent()) {
+                VoiceChannel tiki = tikiChannel.get();
+                runTiki(tiki, prev, target, guild);
+            }
+            else {
+                guild.createVoiceChannel(TIKI).queue(tiki -> runTiki(tiki, prev, target, guild));
+            }
 
         }
+    }
+    private void runTiki(VoiceChannel tikiChannel, VoiceChannel prevChannel, Member target, Guild guild) {
+        guild.moveVoiceMember(target, tikiChannel).queue(_ -> {
+            AudioManager audioManager = guild.getAudioManager();
+            audioManager.openAudioConnection(tikiChannel);
+            audioManager.setSendingHandler(BotAudioSystem.getLavaAudioPlayerSendHandler());
+            BotAudioSystem.lavaLoadResource("sounds/tiki.mp3");
+            ThreadUtil.scheduleTask(() -> {
+                BotAudioSystem.getLavaAudioPlayer().stopTrack();
+                audioManager.setSendingHandler(null);
+                guild.moveVoiceMember(target, prevChannel).queue();
+                audioManager.closeAudioConnection();
+            }, 5, TimeUnit.SECONDS);
+        });
     }
 
 }

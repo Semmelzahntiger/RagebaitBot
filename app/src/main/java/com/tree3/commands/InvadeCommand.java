@@ -30,7 +30,7 @@ public class InvadeCommand implements Command {
             audioManager.openAudioConnection(channel);
             // LavaPlayer decodes the mp3 and emits Opus; javax.sound only reads WAVE/AU/AIFF
             audioManager.setSendingHandler(BotAudioSystem.getLavaAudioPlayerSendHandler());
-            // the resource lives in resources/sounds/, so the classpath name is prefixed
+            // the resource lives in resources/sounds/, so the classpath name is prefixes
             BotAudioSystem.lavaLoadResource("sounds/tiki.mp3");
             ThreadUtil.scheduleTask(() -> {
                 BotAudioSystem.getLavaAudioPlayer().stopTrack();
