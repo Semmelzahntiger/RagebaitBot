@@ -7,6 +7,9 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    maven {
+        url = uri("https://jitpack.io")
+    }
 }
 
 dependencies {
@@ -23,6 +26,16 @@ dependencies {
     // Source: https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
     implementation("ch.qos.logback:logback-classic:1.5.32")
     implementation("org.scilab.forge:jlatexmath:1.0.7")
+    implementation("club.minnced:jdave-api:0.1.8")
+
+    // Compiled natives for libdave for the specified platform
+    implementation("club.minnced:jdave-native-linux-x86-64:0.1.8")
+    implementation("club.minnced:jdave-native-linux-aarch64:0.1.8")
+    implementation("club.minnced:jdave-native-win-x86-64:0.1.8")
+    implementation("club.minnced:jdave-native-darwin:0.1.8")
+
+    implementation("club.minnced:opus-java:1.1.1")
+    implementation("dev.arbjerg:lavaplayer:2.2.7")
 }
 tasks.register<JavaExec>("runBot") {
     dependsOn("assemble")

@@ -1,5 +1,11 @@
 package com.tree3;
 
+import club.minnced.discord.jdave.interop.JDaveSessionFactory;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.tree3.audio.DefaultAudioResultHandler;
 import com.tree3.cli.CLIReader;
 import com.tree3.generated.GeneratedCommands;
 import com.tree3.generated.GeneratedEventListeners;
@@ -10,26 +16,33 @@ import com.tree3.util.LogUtil;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.audio.AudioModuleConfig;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
 import java.util.List;
 
 public class Main {
+    private static final String token;
 
-    private static String latexInterpreterUri = null;
-    private static BotHttpClient httpClient = null;
-    public static void main(String[] args) {
-        LogUtil.getLogger().info("Starting Bot...");
+    private static final String latexInterpreterUri;
+    private static final BotHttpClient httpClient;
 
+    static {
         Dotenv dotenv = Dotenv.load();
-        String token = dotenv.get("BOT_TOKEN");
 
+        token = dotenv.get("BOT_TOKEN");
         latexInterpreterUri = dotenv.get("LATEX_INTERPRETER_URI");
         httpClient = new BotHttpClient();
 
+
+    }
+
+    public static void main(String[] args) {
+        LogUtil.getLogger().info("Starting Bot...");
         if (token == null) {
             LogUtil.getLogger().error("Token not found, Bot cannot be started");
             System.exit(1);
@@ -47,10 +60,17 @@ public class Main {
         List<CommandData> commands = Registry.getCommands();
         LogUtil.getLogger().info("Found {} commands" , commands.size());
         JDA jda = JDABuilder.createDefault(token,
+                        GatewayIntent.GUILD_VOICE_STATES,
+                        GatewayIntent.GUILD_EXPRESSIONS,
+                        GatewayIntent.SCHEDULED_EVENTS,
                         GatewayIntent.GUILD_MEMBERS,
                         GatewayIntent.GUILD_MESSAGES,
                         GatewayIntent.MESSAGE_CONTENT)
                 .addEventListeners(listeners)
+                .setAudioModuleConfig(
+                        new AudioModuleConfig().withDaveSessionFactory(new JDaveSessionFactory())
+                )
+                .enableCache(CacheFlag.SOUNDBOARD_SOUNDS)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .setActivity(Activity.customStatus("Ragebaiting"))
                 .build();
@@ -59,6 +79,7 @@ public class Main {
         CLIReader reader = new CLIReader();
         reader.start();
 
+
     }
     public static String getLatexInterpreterUri() {
         return latexInterpreterUri;
@@ -66,4 +87,5 @@ public class Main {
     public static BotHttpClient getHttpClient() {
         return httpClient;
     }
+
 }

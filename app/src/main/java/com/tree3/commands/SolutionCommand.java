@@ -14,6 +14,6 @@ public class SolutionCommand implements Command {
 
     @Override
     public void onCommand(SlashCommandInteractionEvent event) {
-T
+
     }
 }
