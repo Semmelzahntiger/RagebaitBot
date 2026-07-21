@@ -4,7 +4,9 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import dev.lavalink.youtube.YoutubeAudioSourceManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,11 +31,18 @@ public class BotAudioSystem {
         AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
         audioPlayerManager = playerManager;
         AudioSourceManagers.registerLocalSource(playerManager);
-        AudioSourceManagers.registerRemoteSources(playerManager);
+        playerManager.registerSourceManager(new YoutubeAudioSourceManager(true));
+        AudioSourceManagers.registerRemoteSources(playerManager, builtInYoutubeSource());
         audioPlayer = playerManager.createPlayer();
         defaultAudioResultHandler = new DefaultAudioResultHandler(audioPlayer);
         audioPlayerSendHandler = new LavaAudioPlayerSendHandler(audioPlayer);
         inputStreamAudioPlayerSendHandler = new InputStreamAudioPlayerSendHandler();
+    }
+
+    /** Referenced only so it can be excluded from registration; LavaPlayer deprecated it itself. */
+    @SuppressWarnings("deprecation")
+    private static Class<? extends AudioSourceManager> builtInYoutubeSource() {
+        return com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager.class;
     }
 
     public static AudioPlayer getLavaAudioPlayer() {
