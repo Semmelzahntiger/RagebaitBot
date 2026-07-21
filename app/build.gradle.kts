@@ -10,6 +10,10 @@ repositories {
     maven {
         url = uri("https://jitpack.io")
     }
+    // youtube-source plugin, replaces LavaPlayer's built-in YouTube extractor
+    maven {
+        url = uri("https://maven.lavalink.dev/releases")
+    }
 }
 
 dependencies {
@@ -36,6 +40,9 @@ dependencies {
 
     implementation("club.minnced:opus-java:1.1.1")
     implementation("dev.arbjerg:lavaplayer:2.2.7")
+    // LavaPlayer's bundled YouTube source can no longer parse YouTube's player script;
+    // this maintained plugin replaces it. Expect to bump this when YouTube changes things.
+    implementation("dev.lavalink.youtube:v2:1.18.1")
 }
 tasks.register<JavaExec>("runBot") {
     dependsOn("assemble")
