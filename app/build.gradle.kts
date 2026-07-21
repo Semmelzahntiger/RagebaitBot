@@ -7,13 +7,16 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    maven {
+        url = uri("https://jitpack.io")
+    }
 }
 
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    implementation("net.dv8tion:JDA:6.3.0")
+    implementation("net.dv8tion:JDA:6.5.0")
     // Source: https://mvnrepository.com/artifact/io.github.cdimascio/dotenv-java
     implementation("io.github.cdimascio:dotenv-java:3.2.0")
     annotationProcessor(project(":processor"))
@@ -23,6 +26,16 @@ dependencies {
     // Source: https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
     implementation("ch.qos.logback:logback-classic:1.5.32")
     implementation("org.scilab.forge:jlatexmath:1.0.7")
+    implementation("club.minnced:jdave-api:0.1.8")
+
+    // Compiled natives for libdave for the specified platform
+    implementation("club.minnced:jdave-native-linux-x86-64:0.1.8")
+    implementation("club.minnced:jdave-native-linux-aarch64:0.1.8")
+    implementation("club.minnced:jdave-native-win-x86-64:0.1.8")
+    implementation("club.minnced:jdave-native-darwin:0.1.8")
+
+    implementation("club.minnced:opus-java:1.1.1")
+    implementation("dev.arbjerg:lavaplayer:2.2.7")
 }
 tasks.register<JavaExec>("runBot") {
     dependsOn("assemble")
