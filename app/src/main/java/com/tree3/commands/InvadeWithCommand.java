@@ -32,8 +32,7 @@ public class InvadeWithCommand implements Command {
     public void onCommand(SlashCommandInteractionEvent event) {
         event.reply("Received Command").queue();
 
-        //Abort if audio is currently playing
-        InputStreamAudioPlayerSendHandler audioPlayer = BotAudioSystem.getInputStreamAudioPlayerSendHandler();
+        InputStreamAudioPlayerSendHandler audioPlayer = BotAudioSystem.getNewInputStreamAudioPlayerSendHandler();
         if(audioPlayer.isPlaying()) {
             event.getHook().sendMessage("Bot is currently busy").queue();
             return;
@@ -59,7 +58,6 @@ public class InvadeWithCommand implements Command {
             return;
         }
 
-        double prevVolume = audioPlayer.getVolume();
         double volume = event.getOption("volume") != null ? event.getOption("volume").getAsDouble() : audioPlayer.getVolume();
         int duration = event.getOption("duration") != null ? event.getOption("duration").getAsInt() : -1;
 
@@ -82,8 +80,7 @@ public class InvadeWithCommand implements Command {
                 ThreadUtil.scheduleTask(() -> {
                     audioManager.setSendingHandler(null);
                     audioManager.closeAudioConnection();
-                    audioPlayer.closeCurrentStream();
-                    audioPlayer.setVolume(prevVolume);
+                    audioPlayer.stop();
                 }, duration, TimeUnit.SECONDS);
             }
             else {
@@ -92,7 +89,6 @@ public class InvadeWithCommand implements Command {
                     ThreadUtil.scheduleTask(() -> {
                         audioManager.setSendingHandler(null);
                         audioManager.closeAudioConnection();
-                        audioPlayer.setVolume(prevVolume);
                     }, 2, TimeUnit.SECONDS);
                 });
             }

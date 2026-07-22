@@ -1,6 +1,5 @@
 package com.tree3.audio;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -18,59 +17,30 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class BotAudioSystem {
-
     private static final Map<String, Path> EXTRACTED_RESOURCES = new ConcurrentHashMap<>();
-
-    private static final AudioPlayer audioPlayer;
-    private static final AudioPlayerManager audioPlayerManager;
-    private static final DefaultAudioResultHandler defaultAudioResultHandler;
-    private static final LavaAudioPlayerSendHandler audioPlayerSendHandler;
-    private static final InputStreamAudioPlayerSendHandler inputStreamAudioPlayerSendHandler;
-
+    private static final AudioPlayerManager PLAYER_MANAGER = new DefaultAudioPlayerManager();
     static {
-        AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
-        audioPlayerManager = playerManager;
-        AudioSourceManagers.registerLocalSource(playerManager);
-        playerManager.registerSourceManager(new YoutubeAudioSourceManager(true));
-        AudioSourceManagers.registerRemoteSources(playerManager, builtInYoutubeSource());
-        audioPlayer = playerManager.createPlayer();
-        defaultAudioResultHandler = new DefaultAudioResultHandler(audioPlayer);
-        audioPlayerSendHandler = new LavaAudioPlayerSendHandler(audioPlayer);
-        inputStreamAudioPlayerSendHandler = new InputStreamAudioPlayerSendHandler();
+        AudioSourceManagers.registerRemoteSources(PLAYER_MANAGER, builtInYoutubeSource());
+        PLAYER_MANAGER.registerSourceManager(new YoutubeAudioSourceManager(true));
+        AudioSourceManagers.registerLocalSource(PLAYER_MANAGER);
+    }
+    private static final Map<Long, LavaAudioPlayerSendHandler> GUILD_HANDLERS = new ConcurrentHashMap<>();
+
+    public static LavaAudioPlayerSendHandler getLavaAudioPlayerSendHandler(long guildId) {
+        return GUILD_HANDLERS.computeIfAbsent(guildId, id -> {
+            AudioPlayer audioPlayer = PLAYER_MANAGER.createPlayer();
+            return new LavaAudioPlayerSendHandler(audioPlayer, PLAYER_MANAGER);
+        });
+    }
+    public static InputStreamAudioPlayerSendHandler getNewInputStreamAudioPlayerSendHandler() {
+        return new InputStreamAudioPlayerSendHandler();
     }
 
-    /** Referenced only so it can be excluded from registration; LavaPlayer deprecated it itself. */
-    @SuppressWarnings("deprecation")
     private static Class<? extends AudioSourceManager> builtInYoutubeSource() {
         return com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager.class;
     }
-
-    public static AudioPlayer getLavaAudioPlayer() {
-        return audioPlayer;
-    }
-    public static AudioPlayerManager getLavaAudioPlayerManager() {
-        return audioPlayerManager;
-    }
-    public static DefaultAudioResultHandler getDefaultAudioResultHandler() {
-        return defaultAudioResultHandler;
-    }
-    public static LavaAudioPlayerSendHandler getLavaAudioPlayerSendHandler() {
-        return audioPlayerSendHandler;
-    }
-    public static InputStreamAudioPlayerSendHandler getInputStreamAudioPlayerSendHandler() {
-        return inputStreamAudioPlayerSendHandler;
-    }
-    public static void lavaLoadItem(String path) {
-        getLavaAudioPlayerManager().loadItem(path, getDefaultAudioResultHandler());
-    }
-    public static void lavaLoadItem(String path, AudioLoadResultHandler resultHandler) {
-        getLavaAudioPlayerManager().loadItem(path, resultHandler);
-    }
-    public static boolean loadInputStream(InputStream stream) {
-        return getInputStreamAudioPlayerSendHandler().load(stream);
-    }
-    public static boolean loadInputStreamWithFFMPEG(InputStream stream) {
-        return getInputStreamAudioPlayerSendHandler().loadWithFFMPEG(stream);
+    public static DefaultAudioResultHandler getDefaultAudioResultHandler(AudioPlayer audioPlayer) {
+        return new DefaultAudioResultHandler(audioPlayer);
     }
     public static Path extractResource(String resource) {
         return EXTRACTED_RESOURCES.computeIfAbsent(resource, name -> {
@@ -87,8 +57,5 @@ public class BotAudioSystem {
                 throw new UncheckedIOException("Could not extract " + name, e);
             }
         });
-    }
-    public static void lavaLoadResource(String resource) {
-        lavaLoadItem(extractResource(resource).toAbsolutePath().toString());
     }
 }
