@@ -43,8 +43,8 @@ dependencies {
     // LavaPlayer's bundled YouTube source can no longer parse YouTube's player script;
     // this maintained plugin replaces it. Expect to bump this when YouTube changes things.
     implementation 'dev.lavalink.youtube:v2:1.18.1'
-    // Source: https://mvnrepository.com/artifact/com.googlecode.soundlibs/soundlibs
-    implementation 'com.googlecode.soundlibs:soundlibs:1.4'
+    // Source: https://mvnrepository.com/artifact/com.googlecode.soundlibs/mp3spi
+    implementation("com.googlecode.soundlibs:mp3spi:1.9.5.4")
 }
 
 tasks.register('runBot', JavaExec) {
