@@ -41,7 +41,6 @@ public class TikiTikiTikiCommand implements Command {
             else {
                 guild.createVoiceChannel(TIKI).queue(tiki -> runTiki(tiki, prev, target, guild));
             }
-
         }
     }
     private void runTiki(VoiceChannel tikiChannel, VoiceChannel prevChannel, Member target, Guild guild) {

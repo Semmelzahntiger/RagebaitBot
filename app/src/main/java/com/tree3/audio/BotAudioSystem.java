@@ -69,6 +69,9 @@ public class BotAudioSystem {
     public static boolean loadInputStream(InputStream stream) {
         return getInputStreamAudioPlayerSendHandler().load(stream);
     }
+    public static boolean loadInputStreamWithFFMPEG(InputStream stream) {
+        return getInputStreamAudioPlayerSendHandler().loadWithFFMPEG(stream);
+    }
     public static Path extractResource(String resource) {
         return EXTRACTED_RESOURCES.computeIfAbsent(resource, name -> {
             try (InputStream stream = BotAudioSystem.class.getClassLoader().getResourceAsStream(name)) {
@@ -88,5 +91,4 @@ public class BotAudioSystem {
     public static void lavaLoadResource(String resource) {
         lavaLoadItem(extractResource(resource).toAbsolutePath().toString());
     }
-
 }
