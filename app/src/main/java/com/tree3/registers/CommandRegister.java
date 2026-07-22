@@ -21,6 +21,7 @@ import java.util.function.Consumer;
 
 import static com.tree3.integrallogic.IntegralGenerate.Difficulty.*;
 
+@Deprecated
 public class CommandRegister {
 
     static final Map<User, Guild> servermap = new HashMap<>();
@@ -69,8 +70,10 @@ public class CommandRegister {
         return event -> {
             String n = event.getOption("n").getAsString();
             int nth = Integer.parseInt(n);
-            event.reply("Noooooo").queue();
-
+            if(nth > 10) {
+                event.reply("Leck meine eier").queue();
+                return;
+            }
             for (int i = 1; i <= nth; i++) {
                 event.getChannel().sendMessage("I love TREE(" + i + ")").queue();
             }
