@@ -3,7 +3,9 @@ package com.tree3.commands;
 import com.tree3.BotCommand;
 import com.tree3.Command;
 import com.tree3.Main;
+import com.tree3.json.LaTeXInterpreted;
 import com.tree3.util.BotHttpClient;
+import com.tree3.util.GSONSerializer;
 import com.tree3.util.LogUtil;
 import com.tree3.util.ThreadUtil;
 import net.dv8tion.jda.api.entities.Message;
@@ -28,19 +30,20 @@ public class InterpretCommand implements Command {
         try {
             OptionMapping attachmentOption = event.getOption("png");
             if(attachmentOption == null ) {
-                event.reply("No Attachment found").queue();
+                event.getHook().sendMessage("No Attachment found").queue();
                 return;
             }
             Message.Attachment attachment = attachmentOption.getAsAttachment();
             if(!attachment.getFileExtension().equals("png")) {
-                event.reply("Attachment is not a PNG file").queue();
+                event.getHook().sendMessage("Attachment is not a PNG file").queue();
                 return;
             }
             CompletableFuture<InputStream> file = attachment.getProxy().download();
             file.thenAccept(stream -> {
                 ThreadUtil.runTaskAsync(() -> {
                     String response = Main.getHttpClient().interpretLatex(stream);
-                    event.getHook().sendMessage("Response Received: " + response).queue();
+                    LaTeXInterpreted interpretation = GSONSerializer.getInterpreted(response);
+                    event.getHook().sendMessage("Response Received: " + interpretation.interpreted()).queue();
                 });
             });
         } catch (Exception e) {

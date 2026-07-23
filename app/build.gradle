@@ -45,6 +45,10 @@ dependencies {
     implementation 'dev.lavalink.youtube:v2:1.18.1'
     // Source: https://mvnrepository.com/artifact/com.googlecode.soundlibs/mp3spi
     implementation("com.googlecode.soundlibs:mp3spi:1.9.5.4")
+    // Source: https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
+    implementation("com.squareup.okhttp3:okhttp:5.4.0")
+    // Source: https://mvnrepository.com/artifact/com.google.code.gson/gson
+    implementation("com.google.code.gson:gson:2.14.0")
 }
 
 tasks.register('runBot', JavaExec) {

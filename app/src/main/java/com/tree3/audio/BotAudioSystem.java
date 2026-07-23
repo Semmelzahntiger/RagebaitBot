@@ -20,9 +20,9 @@ public class BotAudioSystem {
     private static final Map<String, Path> EXTRACTED_RESOURCES = new ConcurrentHashMap<>();
     private static final AudioPlayerManager PLAYER_MANAGER = new DefaultAudioPlayerManager();
     static {
-        AudioSourceManagers.registerRemoteSources(PLAYER_MANAGER, builtInYoutubeSource());
-        PLAYER_MANAGER.registerSourceManager(new YoutubeAudioSourceManager(true));
         AudioSourceManagers.registerLocalSource(PLAYER_MANAGER);
+        PLAYER_MANAGER.registerSourceManager(new YoutubeAudioSourceManager(true));
+        AudioSourceManagers.registerRemoteSources(PLAYER_MANAGER, builtInYoutubeSource());
     }
     private static final Map<Long, LavaAudioPlayerSendHandler> GUILD_HANDLERS = new ConcurrentHashMap<>();
 
