@@ -71,11 +71,10 @@ public class InputStreamAudioPlayerSendHandler implements AudioSendHandler {
         audioStream = null;
     }
 
-    public void closeCurrentStream() {
+    private void closeCurrentStream() {
         if (audioStream != null) {
             try {
                 audioStream.close();
-                audioStream = null;
             } catch (IOException e) {
                 LogUtil.getLogger().warn("Failed to close previous audio stream", e);
             }

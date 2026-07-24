@@ -1,11 +1,6 @@
 package com.tree3;
 
 import club.minnced.discord.jdave.interop.JDaveSessionFactory;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
-import com.tree3.audio.DefaultAudioResultHandler;
 import com.tree3.cli.CLIReader;
 import com.tree3.generated.GeneratedCommands;
 import com.tree3.generated.GeneratedEventListeners;
@@ -33,12 +28,9 @@ public class Main {
 
     static {
         Dotenv dotenv = Dotenv.load();
-
         token = dotenv.get("BOT_TOKEN");
         latexInterpreterUri = dotenv.get("LATEX_INTERPRETER_URI");
         httpClient = new BotHttpClient();
-
-
     }
 
     public static void main(String[] args) {

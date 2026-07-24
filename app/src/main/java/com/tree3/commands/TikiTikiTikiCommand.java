@@ -3,6 +3,7 @@ package com.tree3.commands;
 import com.tree3.BotCommand;
 import com.tree3.Command;
 import com.tree3.audio.BotAudioSystem;
+import com.tree3.audio.LavaAudioPlayerSendHandler;
 import com.tree3.util.ThreadUtil;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -47,13 +48,14 @@ public class TikiTikiTikiCommand implements Command {
         guild.moveVoiceMember(target, tikiChannel).queue(_ -> {
             AudioManager audioManager = guild.getAudioManager();
             audioManager.openAudioConnection(tikiChannel);
-            audioManager.setSendingHandler(BotAudioSystem.getLavaAudioPlayerSendHandler());
-            BotAudioSystem.lavaLoadResource("sounds/tiki.mp3");
+            LavaAudioPlayerSendHandler audioPlayer = BotAudioSystem.getLavaAudioPlayerSendHandler(guild.getIdLong());
+            audioPlayer.loadResource("sounds/tiki.mp3");
+            audioManager.setSendingHandler(audioPlayer);
             ThreadUtil.scheduleTask(() -> {
-                BotAudioSystem.getLavaAudioPlayer().stopTrack();
+                audioPlayer.getAudioPlayer().stopTrack();
                 audioManager.setSendingHandler(null);
-                guild.moveVoiceMember(target, prevChannel).queue();
                 audioManager.closeAudioConnection();
+                guild.moveVoiceMember(target, prevChannel).queue();
             }, 5, TimeUnit.SECONDS);
         });
     }

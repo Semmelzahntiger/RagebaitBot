@@ -1,8 +1,12 @@
 package com.tree3.commands;
 
+import com.sedmelluq.discord.lavaplayer.player.event.AudioEventListener;
+import com.sedmelluq.discord.lavaplayer.player.event.TrackEndEvent;
 import com.tree3.BotCommand;
 import com.tree3.Command;
 import com.tree3.audio.BotAudioSystem;
+import com.tree3.audio.LavaAudioPlayerSendHandler;
+import com.tree3.audio.SelfRemovingAudioEventListener;
 import com.tree3.util.LogUtil;
 import com.tree3.util.ThreadUtil;
 import net.dv8tion.jda.api.entities.Member;
@@ -28,6 +32,7 @@ public class InvadeCommand implements Command {
 
     @Override
     public void onCommand(SlashCommandInteractionEvent event) {
+        LavaAudioPlayerSendHandler audioPlayer = BotAudioSystem.getLavaAudioPlayerSendHandler(event.getGuild().getIdLong());
         event.reply("Wow").queue();
 
         OptionMapping url = event.getOption("url");
@@ -37,7 +42,7 @@ public class InvadeCommand implements Command {
             actualDuration = duration.getAsInt();
         }
         else {
-            actualDuration = 5;
+            actualDuration = 20;
         }
 
         Member sender = event.getMember();
@@ -63,21 +68,33 @@ public class InvadeCommand implements Command {
         AudioManager audioManager = event.getGuild().getAudioManager();
         audioManager.openAudioConnection(targetChannel);
         // LavaPlayer decodes the mp3 and emits Opus; javax.sound only reads WAVE/AU/AIFF
-        audioManager.setSendingHandler(BotAudioSystem.getLavaAudioPlayerSendHandler());
+        audioManager.setSendingHandler(audioPlayer);
         // the resource lives in resources/sounds/, so the classpath name is prefixes
         if(url != null && !url.getAsString().isEmpty()) {
-            BotAudioSystem.lavaLoadItem(url.getAsString());
+            audioPlayer.loadItem(url.getAsString());
         }
         else {
-            BotAudioSystem.lavaLoadResource("sounds/tiki.mp3");
+            audioPlayer.loadResource("sounds/tiki.mp3");
         }
-        int prevVolume = BotAudioSystem.getLavaAudioPlayer().getVolume();
-        BotAudioSystem.getLavaAudioPlayer().setVolume((int) (event.getOption("volume") != null ? event.getOption("volume").getAsDouble() : 1.0) * 100);
-        ThreadUtil.scheduleTask(() -> {
-            BotAudioSystem.getLavaAudioPlayer().stopTrack();
-            audioManager.setSendingHandler(null);
-            audioManager.closeAudioConnection();
-            BotAudioSystem.getLavaAudioPlayer().setVolume(prevVolume);
-        }, actualDuration, TimeUnit.SECONDS);
+       audioPlayer.getAudioPlayer().setVolume((int) (event.getOption("volume") != null ? event.getOption("volume").getAsDouble() : 1.0) * 100);
+        ThreadUtil.runTaskAsync(() -> {
+            long start = System.currentTimeMillis();
+            while(!audioManager.isConnected()) {
+                if(System.currentTimeMillis() - start > TimeUnit.SECONDS.toMillis(5)) {
+                    break;
+                }
+            }
+            SelfRemovingAudioEventListener listener = new SelfRemovingAudioEventListener(audioManager, audioPlayer.getAudioPlayer());
+            audioPlayer.getAudioPlayer().addListener(listener);
+            ThreadUtil.scheduleTask(() -> {
+                audioPlayer.getAudioPlayer().removeListener(listener);
+                if(audioManager.isConnected()) {
+                    audioPlayer.getAudioPlayer().stopTrack();
+                    audioManager.setSendingHandler(null);
+                    audioManager.closeAudioConnection();
+                }
+            }, actualDuration, TimeUnit.SECONDS);
+        });
     }
+
 }
