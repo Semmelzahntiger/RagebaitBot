@@ -15,16 +15,6 @@ jobs:
         run: chmod +x ./gradlew
       - name: Generate Fat Jar
         run: ./gradlew shadowJar --no-daemon
-      - name: Move Docker Files to VM
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.VM_HOST }}
-          username: ${{ secrets.VM_USER}}
-          key: ${{ secrets.VM_KEY }}
-          port: ${{ secrets.VM_PORT }}
-          source: "dockerfile, docker-compose.yml"
-          target: "~/images/RagebaitBot"
-          strip_components: '0'
       - name: Move SCP to VM
         uses: appleboy/scp-action@v0.1.7
         with:
