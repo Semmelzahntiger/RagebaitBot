@@ -1,4 +1,6 @@
 services:
   ragebaitbot:
     build: .
+    volumes:
+      - ./.env:/app/.env:ro
     restart: unless-stopped
