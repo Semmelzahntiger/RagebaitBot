@@ -25,7 +25,6 @@ public class LavaAudioPlayerSendHandler implements AudioSendHandler {
     @Override
     public boolean canProvide() {
        lastFrame = audioPlayer.provide();
-        LogUtil.getLogger().debug("canProvide" + (lastFrame != null));
        return lastFrame != null;
     }
 

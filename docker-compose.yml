@@ -1,0 +1,4 @@
+services:
+  ragebaitbot:
+    build: .
+    restart: unless-stopped

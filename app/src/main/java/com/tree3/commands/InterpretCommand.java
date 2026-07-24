@@ -6,6 +6,7 @@ import com.tree3.Main;
 import com.tree3.json.LaTeXInterpreted;
 import com.tree3.util.BotHttpClient;
 import com.tree3.util.GSONSerializer;
+import com.tree3.util.LaTeXParser;
 import com.tree3.util.LogUtil;
 import com.tree3.util.ThreadUtil;
 import net.dv8tion.jda.api.entities.Message;
@@ -13,8 +14,11 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.utils.FileUpload;
 
 import java.io.InputStream;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @BotCommand(name = "interpret", description = "Interprets Handwriting to LaTeX")
@@ -42,8 +46,16 @@ public class InterpretCommand implements Command {
             file.thenAccept(stream -> {
                 ThreadUtil.runTaskAsync(() -> {
                     String response = Main.getHttpClient().interpretLatex(stream);
+                    if(response.isEmpty()) {
+                        event.getHook().sendMessage("Could not interpret LaTeX").queue();
+                        return;
+                    }
                     LaTeXInterpreted interpretation = GSONSerializer.getInterpreted(response);
-                    event.getHook().sendMessage("Response Received: " + interpretation.interpreted()).queue();
+                    Optional<InputStream> image = LaTeXParser.formulaToInputStream(interpretation.interpreted());
+                    image.ifPresentOrElse(imageStream -> event.getHook()
+                            .sendMessage("Interpreted LaTeX: " + interpretation.interpreted())
+                            .addFiles(FileUpload.fromData(imageStream, UUID.randomUUID() + ".png"))
+                            .queue(), () -> event.getHook().sendMessage("Could not interpret LaTeX").queue());
                 });
             });
         } catch (Exception e) {

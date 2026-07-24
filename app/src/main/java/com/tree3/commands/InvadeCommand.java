@@ -1,9 +1,12 @@
 package com.tree3.commands;
 
+import com.sedmelluq.discord.lavaplayer.player.event.AudioEventListener;
+import com.sedmelluq.discord.lavaplayer.player.event.TrackEndEvent;
 import com.tree3.BotCommand;
 import com.tree3.Command;
 import com.tree3.audio.BotAudioSystem;
 import com.tree3.audio.LavaAudioPlayerSendHandler;
+import com.tree3.audio.SelfRemovingAudioEventListener;
 import com.tree3.util.LogUtil;
 import com.tree3.util.ThreadUtil;
 import net.dv8tion.jda.api.entities.Member;
@@ -39,7 +42,7 @@ public class InvadeCommand implements Command {
             actualDuration = duration.getAsInt();
         }
         else {
-            actualDuration = 5;
+            actualDuration = 20;
         }
 
         Member sender = event.getMember();
@@ -74,10 +77,24 @@ public class InvadeCommand implements Command {
             audioPlayer.loadResource("sounds/tiki.mp3");
         }
        audioPlayer.getAudioPlayer().setVolume((int) (event.getOption("volume") != null ? event.getOption("volume").getAsDouble() : 1.0) * 100);
-        ThreadUtil.scheduleTask(() -> {
-            audioPlayer.getAudioPlayer().stopTrack();
-            audioManager.setSendingHandler(null);
-            audioManager.closeAudioConnection();
-        }, actualDuration, TimeUnit.SECONDS);
+        ThreadUtil.runTaskAsync(() -> {
+            long start = System.currentTimeMillis();
+            while(!audioManager.isConnected()) {
+                if(System.currentTimeMillis() - start > TimeUnit.SECONDS.toMillis(5)) {
+                    break;
+                }
+            }
+            SelfRemovingAudioEventListener listener = new SelfRemovingAudioEventListener(audioManager, audioPlayer.getAudioPlayer());
+            audioPlayer.getAudioPlayer().addListener(listener);
+            ThreadUtil.scheduleTask(() -> {
+                audioPlayer.getAudioPlayer().removeListener(listener);
+                if(audioManager.isConnected()) {
+                    audioPlayer.getAudioPlayer().stopTrack();
+                    audioManager.setSendingHandler(null);
+                    audioManager.closeAudioConnection();
+                }
+            }, actualDuration, TimeUnit.SECONDS);
+        });
     }
+
 }

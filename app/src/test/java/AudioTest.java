@@ -20,7 +20,6 @@ public class AudioTest {
         Assertions.assertNotNull(in);
         byte[] buf = in.readAllBytes();
         Assertions.assertTrue(buf.length > 0);
-        LogUtil.getLogger().debug(String.valueOf(buf.length));
     }
 
     @Test
